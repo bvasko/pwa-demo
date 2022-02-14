@@ -1,10 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
-
-const WebpackShellPluginNext = require('webpack-shell-plugin-next');
 const path = require('path');
-const { InjectManifest, GenerateSW } = require('workbox-webpack-plugin');
+const { InjectManifest } = require('workbox-webpack-plugin');
 
 // TODO: Add and configure workbox plugins for a service worker and manifest file.
 // TODO: Add CSS loaders and babel to webpack.
@@ -18,29 +15,21 @@ module.exports = () => {
     },
     output: {
       clean: true,
-      filename: 'js/[name].bundle.js',
+      filename: '[name].bundle.js',
       path: path.resolve(__dirname, 'dist')
     },
     plugins: [
-      new WebpackShellPluginNext({
-        onBuildStart:{
-          scripts: ['echo "===> Starting packing with WEBPACK 5"'],
-          blocking: true,
-          parallel: false
-        },
-        onBuildEnd:{
-          scripts: ['echo "DONE"'],
-          blocking: false,
-          parallel: true
-        }
-      }),
       new HtmlWebpackPlugin({
         template: './index.html',
         title: 'Just Another Text Editor'
       }),
-      new MiniCssExtractPlugin(),
-      new GenerateSW(),
+      new InjectManifest({
+        swSrc: './src-sw.js',
+        swDest: "src-sw.js"
+      }),
       new WebpackPwaManifest({
+        fingerprints: false,
+        inject: true,
         name: 'just another text editor',
         short_name: 'J.A.T.E.',
         description: 'Take notes with js syntax highlighting',
@@ -50,9 +39,9 @@ module.exports = () => {
         publicPath: '/',
         icons: [
           {
-            src: path.resolve('./src/images/logo.png'),
+            src: path.resolve('src/images/logo.png'),
             sizes: [96, 128, 192, 256, 384, 512],
-            destination: path.join('images', 'icons'),
+            destination: path.join('assets', 'icons'),
           },
         ],
       }),
@@ -65,7 +54,7 @@ module.exports = () => {
       rules: [
         {
           test: /\.css$/i,
-          use: [MiniCssExtractPlugin.loader, 'css-loader'],
+          use: ['style-loader', 'css-loader'],
         },
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
@@ -78,6 +67,7 @@ module.exports = () => {
             loader: 'babel-loader',
             options: {
               presets: ['@babel/preset-env'],
+              plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/transform-runtime'],
             },
           },
         },

@@ -5,28 +5,23 @@ const btnInstall = document.getElementById('buttonInstall');
 window.addEventListener('beforeinstallprompt', (event) => {
   event.preventDefault();
   btnInstall.style.visibility = 'visible';
-
-  installBtn.addEventListener('click', () => {
-    event.prompt();
-    installBtn.setAttribute('disabled', true);
-    btnInstall.textContent = 'Installed!';
-  });
 });
+
 
 // TODO: Implement a click event handler on the `btnInstall` element
 btnInstall.addEventListener('click', async () => {
-  const promptEvent = window.deferredPrompt;
-
-  if (!promptEvent) {
-   return;
+  const btnEvent = window.deferredPrompt;
+  if (!btnEvent) {
+    return;
   }
-
-  promptEvent.prompt();
-  
+  btnEvent.prompt();
   window.deferredPrompt = null;
-  
   btnInstall.classList.toggle('hidden', true);
 });
 
 // TODO: Add an handler for the `appinstalled` event
-window.addEventListener('appinstalled', (event) => {});
+// Hides the prompt once the app is installed
+window.addEventListener('appinstalled', (e) => {
+  window.deferredPrompt = null;
+});
+

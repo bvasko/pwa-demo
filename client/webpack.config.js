@@ -3,9 +3,6 @@ const WebpackPwaManifest = require('webpack-pwa-manifest');
 const path = require('path');
 const { InjectManifest } = require('workbox-webpack-plugin');
 
-// TODO: Add and configure workbox plugins for a service worker and manifest file.
-// TODO: Add CSS loaders and babel to webpack.
-
 module.exports = () => {
   return {
     mode: 'development',
@@ -14,14 +11,13 @@ module.exports = () => {
       install: './src/js/install.js'
     },
     output: {
-      clean: true,
       filename: '[name].bundle.js',
-      path: path.resolve(__dirname, 'dist')
+      path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
       new HtmlWebpackPlugin({
         template: './index.html',
-        title: 'Just Another Text Editor'
+        title: "J.A.T.E."
       }),
       new InjectManifest({
         swSrc: './src-sw.js',
@@ -31,34 +27,27 @@ module.exports = () => {
         fingerprints: false,
         inject: true,
         name: 'just another text editor',
-        short_name: 'J.A.T.E.',
-        description: 'Take notes with js syntax highlighting',
-        background_color: '#7eb4e2',
-        theme_color: '#7eb4e2',
+        short_name: 'J.A.T.E',
+        description: 'Just Another Text Editor',
+        background_color: '#f5f5f5',
+        theme_color: '#225ca3',
         start_url: '/',
         publicPath: '/',
+        crossorigin: 'anonymous', //can be null, use-credentials or anonymous
         icons: [
           {
             src: path.resolve('src/images/logo.png'),
             sizes: [96, 128, 192, 256, 384, 512],
-            destination: path.join('assets', 'icons'),
-          },
-        ],
-      }),
-      new InjectManifest({
-        swSrc: './src-sw.js'
+            destination: path.join('assets', 'icons')
+          }
+        ]
       })
     ],
-
     module: {
       rules: [
         {
           test: /\.css$/i,
           use: ['style-loader', 'css-loader'],
-        },
-        {
-          test: /\.(png|svg|jpg|jpeg|gif)$/i,
-          type: 'asset/resource',
         },
         {
           test: /\.m?js$/,
@@ -68,14 +57,10 @@ module.exports = () => {
             options: {
               presets: ['@babel/preset-env'],
               plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/transform-runtime'],
-            },
-          },
-        },
-      ],
-    },
+            }
+          }
+        }
+      ]
+    }
   };
 };
-
-/**
- *   
- */
